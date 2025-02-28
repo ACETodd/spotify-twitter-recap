@@ -11,6 +11,13 @@ export default {
         background: "var(--background)",
         foreground: "var(--foreground)",
       },
+        '.no-scrollbar::-webkit-scrollbar': {
+        display: 'none',
+      },
+        '.no-scrollbar': {
+        '-ms-overflow-style': 'none',
+        'scrollbar-width': 'none',
+      },
     },
   },
   plugins: [],
