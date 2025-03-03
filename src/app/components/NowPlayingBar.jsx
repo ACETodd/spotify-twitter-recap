@@ -36,11 +36,11 @@ const NowPlayingBar = ({ track, size, title }) => {
            minHeight: '60px', // Minimum height for readability
          }}>
       <div className="text-white font-mono text-center p-2 md:p-4 flex-1 md:flex-none">
-        <p className="text-base md:text-xl font-bold truncate text-start">{title}</p>
-        <p className="mt-1 text-sm md:text-base truncate text-left">{track?.name || 'Unknown Track'}</p>
+        <p className="text-base md:text-xl font-mono truncate text-start">{title}</p>
+        <p className="text-white font-mono text-left flex-1 md:flex-none text-wrap max-w-60">{track?.name || 'Unknown Track'}</p>
       </div>
-      <div className="text-white font-mono text-center p-2 md:p-4 flex-1 md:flex-none">
-        <p className="mt-1 text-sm md:text-base truncate text-right">
+      <div className="text-white font-mono text-center flex-1 md:flex-none text-wrap max-w-64">
+        <p className="mt-1 text-sm md:text-base break-words text-right">
           {track?.artists 
             ? (Array.isArray(track.artists) 
                 ? track.artists.join(', ') 
