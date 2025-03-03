@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useLayoutEffect } from 'react';
 import { motion } from "framer-motion";
 import NowPlayingBar from './NowPlayingBar'
 
@@ -11,24 +11,19 @@ const Player = () => {
   const [accessToken, setAccessToken] = useState(null);
   const [size, setSize] = useState(500);
   
-  useEffect(() => {
-    // Function to update size based on viewport width
+  useLayoutEffect(() => {
     const updateSize = () => {
       const viewportWidth = window.innerWidth;
-      // Set CD size relative to viewport, with min and max constraints
       const newSize = Math.min(Math.max(viewportWidth * 0.5, 250), 500);
       setSize(newSize);
     };
-    
-    // Set initial size
+  
     updateSize();
-    
-    // Add resize listener
     window.addEventListener('resize', updateSize);
-    
-    // Clean up
+  
     return () => window.removeEventListener('resize', updateSize);
   }, []);
+  
 
   const outerRingSize = size * 0.96; // 480/500
   const centerHoleSize = size * 0.3;  // 150/500
@@ -39,14 +34,6 @@ const Player = () => {
   const smallerCircleSize = size * 0.134; // 67/500
   const centerCircleSize = size * 0.12;  // 60/500
   
-  const barWidth = Math.min(size * 2, window.innerWidth * 0.95); // Twice CD size but max 95% of viewport
-  const barHeight = size * 0.256; // Proportional to CD size (32/500 ratio)
-
-  // Bottom error bar size calculations
-  const errorBarWidth = size * 2; // Twice the CD size
-  const errorBarHeight = size * 0.256; // 32/500 of CD size
-
-
   // Get access token from localStorage
   useEffect(() => {
     const userData = localStorage.getItem('spotifyUser');
@@ -73,6 +60,7 @@ const Player = () => {
       
       if (!response.ok) {
         throw new Error('Failed to fetch currently playing track');
+        
       }
       
       const data = await response.json();
