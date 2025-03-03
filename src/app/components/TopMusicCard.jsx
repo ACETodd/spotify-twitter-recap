@@ -25,7 +25,7 @@ export default function TopMusicCard({ user }) {
   };
 
   return (
-    <div className='flex flex-col  sm:w-[700px] mb-64'>
+    <div className='flex flex-col  sm:w-[700px] mb-48 sm:mb-0'>
          <div className={"relative md:px-12"}>
            <div className='flex space-x-4 justify-between mb-4 px-4'>
              <div className='font-mono text-white'>Top Songs - recent</div>
