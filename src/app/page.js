@@ -18,9 +18,14 @@ export default function Home() {
   //   localStorage.setItem('spotifyUser', JSON.stringify(userData));
   // };
 
+  const handleLogout = () => {
+    localStorage.removeItem('spotifyUser');
+    setUser(null);
+  };
+
   return (
     <div>
-      <Login user={user} onLogin={() => {}} />
+      <Login user={user} onLogin={() => {}} handleLogout={() => handleLogout()} />
     </div>
   );
 }
