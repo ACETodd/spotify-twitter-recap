@@ -32,27 +32,26 @@ export default function Login({ user, onLogin }) {
   } else {
     return (
       <div className="min-h-screen bg-black">
-        <header className="mx-auto px-4 py-5 flex justify-between">
-          <div className="text-lg font-bold text-gray-900 font-mono bg-red-400 flex items-center justify-center px-2">
+        <header className="mx-auto sm:px-4 sm:py-5 p-2 pb-4 flex justify-between">
+          <div className="sm:text-lg font-bold text-gray-900 font-mono bg-emerald-400 flex items-center justify-center px-2">
             <div>Spotify Advanced Analytics</div>
           </div>
 
-          <div className="flex items-center space-x-3">
+          <div className="flex items-center justify-center sm:space-x-3 text-right">
                 <img 
                   src={user.images?.[0]?.url || "/api/placeholder/40/40"} 
                   alt="Profile" 
                   className="w-12 h-12 rounded-full"
                 />
-                <div>
+                <div className="hidden sm:block">
                   <div className="text-lg font-bold text-white font-mono">Welcome, {user.display_name}</div>
-                  <div className="text-gray-400 font-mono">{user.email}</div>
                 </div>
           </div>
         </header>
 
             <Carousel user={user}/>
             <div className="">
-                <div className="m-6 my-8 flex align-center justify-stretch flex-col xl:flex-row">
+                <div className="sm:m-6 sm:my-8 flex align-center justify-stretch flex-col xl:flex-row">
                   <TopAlbumsCard user={user}/>
                   <TopMusicCard user={user} />
                 </div>
