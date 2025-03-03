@@ -25,13 +25,13 @@ export default function TopMusicCard({ user }) {
   };
 
   return (
-    <div className='flex flex-col space-y-24  w-[700px] mb-64'>
-         <div className={"relative p-4 md:px-12"}>
-           <div className='flex space-x-4 justify-between mb-4'>
+    <div className='flex flex-col  sm:w-[700px] mb-64'>
+         <div className={"relative md:px-12"}>
+           <div className='flex space-x-4 justify-between mb-4 px-4'>
              <div className='font-mono text-white'>Top Songs - recent</div>
              <div className='font-mono text-white truncate max-w-sm'>{hoveredArtist ? `#${hoveredArtist.rank} - ${hoveredArtist.name}` : "Hover over a song"}</div>
            </div>
-           <div className="flex flex-row items-center sm:justify-center px-4 sm:px-0">
+           <div className="flex flex-row sm:justify-center px-14 sm:px-0 overflow-x-auto overflow-y-hidden h-40 pt-6 ">
              {getArtists('short').reverse().map((item, index) => (
               <motion.div 
                   key={item.id || index}
@@ -50,75 +50,64 @@ export default function TopMusicCard({ user }) {
                   }}
                   transition={{ duration: 0.2 }}
                 >
-                 {/* <img 
-                   src={getImageUrl(item)} 
-                   alt={item.name} 
-                   className="w-20 h-20" 
-                 /> */}
                  <CD albumImage={getImageUrl(item)}  track={item.name} />
                </motion.div>
              ))}
            </div>
          </div>
-          <div className={"relative p-4 md:px-12"}>
-           <div className='flex space-x-4 justify-between mb-4'>
+         <div className={"relative md:px-12"}>
+           <div className='flex space-x-4 justify-between mb-4 px-4'>
              <div className='font-mono text-white'>Top Songs - 6 Months</div>
              <div className='font-mono text-white truncate max-w-sm'>{hoveredArtistMedium ? `#${hoveredArtistMedium.rank} - ${hoveredArtistMedium.name}` : "Hover over a song"}</div>
            </div>
-           <div className="flex flex-row items-center sm:justify-center px-4 sm:px-0">
+           <div className="flex flex-row sm:justify-center px-14 sm:px-0 overflow-x-auto overflow-y-hidden h-40 pt-6 ">
              {getArtists('medium').reverse().map((item, index) => (
-               <motion.div 
-                 key={item.id || index}
-                 onMouseEnter={() => setHoveredArtistMedium({ name: item.name, rank: index + 1 })}
-                 onMouseLeave={() => setHoveredArtistMedium(null)}
-                 className="flex-shrink-0 ml-12 first:ml-0 relative"
-                 style={{ zIndex: hoveredArtistMedium?.name === item.name ? 999 : getArtists('medium').length - index }} // Hovered item gets highest z-index
-                 animate={{
-                  translateY: hoveredArtistMedium?.name === item.name ? -5 : 0,
-                  scale: hoveredArtistMedium?.name === item.name ? 1.2 : 1,
-                  boxShadow: hoveredArtistMedium?.name === item.name 
-                    ? "0 0 20px -4px rgba(0,0,0,0.5)" 
-                    : "0 0 0 0 rgba(0,0,0,0)"
-                }}
-                transition={{ duration: 0.2 }}
-               >
-                 {/* <img 
-                   src={getImageUrl(item)} 
-                   alt={item.name} 
-                   className="w-20 h-20" 
-                 /> */}
+              <motion.div 
+                  key={item.id || index}
+                  onMouseEnter={() => setHoveredArtistMedium({ name: item.name, rank: index + 1 })}
+                  onMouseLeave={() => setHoveredArtistMedium(null)}
+                  className="flex-shrink-0 ml-12 first:ml-0 relative"
+                  style={{ 
+                    zIndex: hoveredArtistMedium?.name === item.name ? 999 : getArtists('medium').length - index 
+                  }}
+                  animate={{
+                    translateY: hoveredArtistMedium?.name === item.name ? -5 : 0,
+                    scale: hoveredArtistMedium?.name === item.name ? 1.2 : 1,
+                    boxShadow: hoveredArtistMedium?.name === item.name 
+                      ? "0 0 20px -4px rgba(0,0,0,0.5)" 
+                      : "0 0 0 0 rgba(0,0,0,0)"
+                  }}
+                  transition={{ duration: 0.2 }}
+                >
                  <CD albumImage={getImageUrl(item)}  track={item.name} />
                </motion.div>
              ))}
            </div>
          </div>
-         <div className={"relative p-4 md:px-12"}>
-           <div className='flex space-x-4 justify-between mb-4'>
+         <div className={"relative md:px-12"}>
+           <div className='flex space-x-4 justify-between mb-4 px-4 '>
              <div className='font-mono text-white'>Top Songs - Past Year</div>
              <div className='font-mono text-white truncate max-w-sm'>{hoveredArtistLong ? `#${hoveredArtistLong.rank} - ${hoveredArtistLong.name}` : "Hover over a song"}</div>
            </div>
-           <div className="flex flex-row items-center sm:justify-center px-4 sm:px-0">
+           <div className="flex flex-row sm:justify-center px-14 sm:px-0 overflow-x-auto overflow-y-hidden h-40 pt-6 ">
              {getArtists('long').reverse().map((item, index) => (
-               <motion.div 
-                 key={item.id || index}
-                 onMouseEnter={() => setHoveredArtistLong({ name: item.name, rank: index + 1 })}
-                 onMouseLeave={() => setHoveredArtistLong(null)}
-                 className="flex-shrink-0 ml-12 first:ml-0 relative"
-                 style={{ zIndex: hoveredArtistLong?.name === item.name ? 999 : getArtists('long').length - index }} // Hovered item gets highest z-index
-                 animate={{
-                  translateY: hoveredArtistLong?.name === item.name ? -5 : 0,
-                  scale: hoveredArtistLong?.name === item.name ? 1.2 : 1,
-                  boxShadow: hoveredArtistLong?.name === item.name 
-                    ? "0 0 20px -4px rgba(0,0,0,0.5)" 
-                    : "0 0 0 0 rgba(0,0,0,0)"
-                }}
-                transition={{ duration: 0.2 }}
-               >
-                 {/* <img 
-                   src={getImageUrl(item)} 
-                   alt={item.name} 
-                   className="w-20 h-20" 
-                 /> */}
+              <motion.div 
+                  key={item.id || index}
+                  onMouseEnter={() => setHoveredArtistLong({ name: item.name, rank: index + 1 })}
+                  onMouseLeave={() => setHoveredArtistLong(null)}
+                  className="flex-shrink-0 ml-12 first:ml-0 relative"
+                  style={{ 
+                    zIndex: hoveredArtistLong?.name === item.name ? 999 : getArtists('long').length - index 
+                  }}
+                  animate={{
+                    translateY: hoveredArtistLong?.name === item.name ? -5 : 0,
+                    scale: hoveredArtistLong?.name === item.name ? 1.2 : 1,
+                    boxShadow: hoveredArtistLong?.name === item.name 
+                      ? "0 0 20px -4px rgba(0,0,0,0.5)" 
+                      : "0 0 0 0 rgba(0,0,0,0)"
+                  }}
+                  transition={{ duration: 0.2 }}
+                >
                  <CD albumImage={getImageUrl(item)}  track={item.name} />
                </motion.div>
              ))}
