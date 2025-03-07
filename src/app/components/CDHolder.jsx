@@ -11,12 +11,25 @@ export default function CDHolder({user, setCurrentTrack, setCurrentTrackIndex}) 
     const [isMobile, setIsMobile] = useState(typeof window !== 'undefined' && window.innerWidth < 640);
 
     useEffect(() => {
+      // Initial check
+      setIsMobile(window.innerWidth < 640);
+      
       const handleResize = () => {
         setIsMobile(window.innerWidth < 640);
       };
       
-      window.addEventListener('resize', handleResize);
-      return () => window.removeEventListener('resize', handleResize);
+      // Throttle the resize event to improve performance
+      let timeoutId;
+      const throttledResize = () => {
+        if (timeoutId) clearTimeout(timeoutId);
+        timeoutId = setTimeout(handleResize, 100);
+      };
+      
+      window.addEventListener('resize', throttledResize);
+      return () => {
+        window.removeEventListener('resize', throttledResize);
+        if (timeoutId) clearTimeout(timeoutId);
+      };
     }, []);
 
 
@@ -99,12 +112,12 @@ export default function CDHolder({user, setCurrentTrack, setCurrentTrackIndex}) 
         w-full h-[125px] mt-4 
         rounded-full bg-gray-200 
         shadow-[inset_8px_8px_16px_#b8bcc6,inset_-8px_-8px_16px_#ffffff] 
-        flex flex-row items-center justify-center 
-        py-4 overflow-x-hidden overflow-y-hidden
+        flex flex-row items-center justify-center pl-44
+        py-4 overflow-x-auto overflow-y-hidden
         
         /* Desktop: vertical layout on the left */
-        sm:absolute sm:left-10 sm:top-1/2 sm:transform sm:-translate-y-1/2 
-        sm:w-[150px] sm:h-[500px] sm:mt-0 sm:justify-start
+        sm:absolute sm:left-10 sm:top-1/2 sm:-translate-y-1/2 
+        sm:w-[150px] sm:h-[500px] sm:mt-0 sm:justify-start sm:pl-0
         sm:flex-col sm:overflow-y-hidden sm:overflow-x-hidden"
     >
         <AnimatePresence mode="wait">
@@ -119,7 +132,7 @@ export default function CDHolder({user, setCurrentTrack, setCurrentTrackIndex}) 
             
         >
             {getArtists(songTerm).reverse().map((item, index) => (
-            <div key={`${songTerm}-${index}`} className=" mb-24 mx-4 sm:mx-0 sm:mb-10 flex-shrink-0"
+            <div key={`${songTerm}-${index}`} className=" mb-24 mx-6 sm:mx-0 sm:mb-10 flex-shrink-0"
             style={{ transform: 'translateX(0)' }} // Ensures each CD has its own space
 
             >
