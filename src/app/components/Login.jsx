@@ -108,7 +108,7 @@ export default function Login({ user, handleLogout }) {
                 </div>
               </div>
         
-        <div className="sm:w-1/4 h-10 sm:h-full">
+        <div className="sm:w-1/4 h-20 sm:h-full">
         <NeuDesc currentTrack={currentTrack} currentTrackIndex={currentTrackIndex}/>
         </div>
 
