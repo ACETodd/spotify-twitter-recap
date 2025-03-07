@@ -71,13 +71,14 @@ export default function Login({ user, handleLogout }) {
 
   if (!user) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
+      <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-gray-200 to-gray-300">
       <button 
         onClick={handleLogin}
-        className="bg-emerald-400 hover:bg-emerald-600 font-bold py-3 px-6 rounded shadow-[0_0_20px_rgba(52,211,153,0.6)] transition-all"
+        className="relative bg-gray-200 text-gray-800 font-bold py-3 px-6 rounded-lg shadow-[8px_8px_16px_#b8bcc6,-8px_-8px_16px_#ffffff] transition-all hover:shadow-[inset_4px_4px_8px_#b8bcc6,inset_-4px_-4px_8px_#ffffff] active:shadow-[inset_6px_6px_12px_#b8bcc6,inset_-6px_-6px_12px_#ffffff]"
       >
         Login with Spotify
       </button>
+
     </div>
 
     )
