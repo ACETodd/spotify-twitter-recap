@@ -131,7 +131,7 @@ export default function CDHolder({user, setCurrentTrack, setCurrentTrackIndex}) 
             className="flex flex-row sm:flex-col items-center"
             
         >
-            {getArtists(songTerm).reverse().map((item, index) => (
+            {getArtists(songTerm).map((item, index) => (
             <div key={`${songTerm}-${index}`} className=" mb-24 mx-6 sm:mx-0 sm:mb-10 flex-shrink-0"
             style={{ transform: 'translateX(0)' }} // Ensures each CD has its own space
 
@@ -143,6 +143,7 @@ export default function CDHolder({user, setCurrentTrack, setCurrentTrackIndex}) 
                 />
             </div>
             ))}
+        
         </motion.div>
         </AnimatePresence>
     </div>
