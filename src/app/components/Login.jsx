@@ -75,7 +75,7 @@ export default function Login({ user, handleLogout }) {
     )
   } else {
     return (
-      <div className="min-h-screen flex sm:flex-row flex-col items-center justify-between bg-gradient-to-br from-gray-200 to-gray-300">
+      <div className="min-h-screen flex sm:flex-row flex-col items-center justify-between bg-gradient-to-br from-gray-200 to-gray-300 mb-10">
           <div className="sm:w-1/4 w-full ">
           <CDHolder user={user} currentTrack={currentTrack} setCurrentTrack={setCurrentTrack} setCurrentTrackIndex={setCurrentTrackIndex}/>
           </div>
