@@ -351,13 +351,14 @@ const Player = () => {
       <div>
         {/* <NowPlayingBar track={"No track playing"} size={size} title={"No Track Currently"}/> */}
         <motion.div 
-          className="fixed left-1/2 z-[1001] flex origin-center select-none items-center justify-center border-2 border-[#d3d3d3] shadow-[0_0_80px_-20px_rgba(0,0,0,0.3)] text-white"
+          className="fixed left-1/2 top-1/2 z-[1001] flex origin-center select-none items-center justify-center border-2 border-[#d3d3d3] shadow-[0_0_80px_-20px_rgba(0,0,0,0.3)] text-white"
           style={{
             width: `${size}px`,
             height: `${size}px`,
             borderRadius: `${size / 2}px`,
             // Fixed positioning adjustment - position from bottom of viewport for consistent appearance
-            bottom: `-${size * 0.54}px`, // Half of the CD will be hidden below viewport
+            // bottom: `-${size * 0.54}px`, 
+            transform: "translate(-50%, -50%)",
             background: `
               radial-gradient(circle at 50% 50%, 
                 #ffffff 0%, 
@@ -379,10 +380,10 @@ const Player = () => {
             `,
             backgroundBlendMode: "screen, overlay"
           }}
-          initial={{ x: "-50%" }}
+          initial={{ x: "-50%", y: "-50%" }}
           whileHover={{
-            scale: 1.05,
-            boxShadow: "0 0 100px -20px rgba(0,0,0,0.5)"
+            scale: 1.02,
+            // boxShadow: "0 0 100px -20px rgba(0,0,0,0.5)"
           }}
           animate={{ 
             rotate: 360,
@@ -468,13 +469,14 @@ const Player = () => {
     <div>
         {/* <NowPlayingBar track={track} size={size} title={"Now Playing"}/> */}
         <motion.div 
-          className="fixed left-1/2 z-[1001] flex origin-center select-none items-center justify-center border-2 border-[#d3d3d3] shadow-[0_0_80px_-20px_rgba(0,0,0,0.3)] text-white"
+          className="fixed left-1/2 top-1/2 z-[1001] flex origin-center select-none items-center justify-center border-2 border-[#d3d3d3] shadow-[0_0_80px_-20px_rgba(0,0,0,0.3)] text-white"
           style={{
             width: `${size}px`,
             height: `${size}px`,
             borderRadius: `${size / 2}px`,
             // Fixed positioning adjustment - position from bottom of viewport for consistent appearance
-            bottom: `-${size * 0.54}px`, // Half of the CD will be hidden below viewport
+            // bottom: `-${size * 0.54}px`,
+            transform: "translate(-50%, -50%)",
             background: `
               radial-gradient(circle at 50% 50%, 
                 #ffffff 0%, 
@@ -496,10 +498,10 @@ const Player = () => {
             `,
             backgroundBlendMode: "screen, overlay"
           }}
-          initial={{ x: "-50%" }}
+          initial={{ x: "-50%", y: "-50%" }}
           whileHover={{
-            scale: 1.05,
-            boxShadow: "0 0 100px -20px rgba(0,0,0,0.5)"
+            scale: 1.02,
+            // boxShadow: "0 0 100px -20px rgba(0,0,0,0.5)"
           }}
           animate={{ 
             rotate: 360,

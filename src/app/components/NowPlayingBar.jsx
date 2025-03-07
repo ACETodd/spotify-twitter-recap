@@ -28,7 +28,7 @@ const NowPlayingBar = ({ track, size, title }) => {
   if (!isVisible) return null;
   
   return (
-    <div className="fixed left-1/2 -translate-x-1/2 z-5 bg-gray-800 rounded-t-3xl flex flex-wrap items-center justify-between px-2 z-[1000]"
+    <div className="fixed left-1/2 -translate-x-1/2 z-5 bg-gray-800 rounded-t-xl flex flex-wrap items-center justify-between px-2 z-[1000]"
          style={{
            width: `${barWidth}px`,
            height: `${barHeight}px`,

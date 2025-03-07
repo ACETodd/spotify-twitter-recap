@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { motion } from "framer-motion";
 
-export default function CD({ albumImage, track }) {
+export default function CD({ albumImage, track, onClick }) {
     const [isActive, setIsActive] = useState(false);
     
     // Define different variants for active and inactive states
@@ -35,6 +35,7 @@ export default function CD({ albumImage, track }) {
         variants={variants}
         onMouseEnter={() => setIsActive(true)}
         onMouseLeave={() => setIsActive(false)}
+        onClick={onClick}
       >
         {/* Rest of your component remains the same */}
         <div className="absolute inset-0 rounded-full overflow-hidden">

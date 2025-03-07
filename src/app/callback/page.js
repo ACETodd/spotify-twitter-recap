@@ -2,6 +2,7 @@
 
 import { useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
+import { TypeAnimation } from "react-type-animation";
 
 export default function Callback() {
   const router = useRouter();
@@ -10,7 +11,7 @@ export default function Callback() {
 
   useEffect(() => {
     if (code) {
-      fetch(`http://localhost:8000/callback?code=${code}`, {
+      fetch(`https://spotify-advanced-analytics.onrender.com/callback?code=${code}`, {
         method: 'GET',
         headers: {
           'Accept': 'application/json',
@@ -43,8 +44,11 @@ export default function Callback() {
 
   return (
     <div className="flex items-center justify-center min-h-screen">
-      <div className="text-center">
-        <h1 className="text-xl mb-4 text-white">Logging in to Spotify...</h1>
+      <div className="text-center text-xl mb-4 text-white font-mono">
+        <TypeAnimation
+          sequence={["Logging in to Spotify...", 300]}
+          repeat={Infinity}
+        />
       </div>
     </div>
   );

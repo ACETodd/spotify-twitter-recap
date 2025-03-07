@@ -26,11 +26,12 @@ export default function TopAlbumsCard({ user }) {
   };
 
   return (
-    <div className='flex flex-col'>
+    <div className='flex flex-col sm:w-1/2 sm:bg-gray-800 sm:pb-12 sm:pt-8 sm:rounded-sm '>
       <div className="relative w-full">
-        <div className='flex space-x-4 sm:justify-between p-4 sm:px-12'>
+        <div className='flex sm:flex-row flex-col sm:space-x-4 justify-between p-4 sm:px-12'>
           <div className='font-mono text-white'>Top Artists - Recent</div>
-          <div className='font-mono text-white truncate max-w-sm'>{hoveredArtist ? `#${hoveredArtist.rank} - ${hoveredArtist.name}` : "Hover over an artist"}</div>
+          <div className='font-mono text-white truncate max-w-sm hidden sm:block'>{hoveredArtist ? `#${hoveredArtist.rank} - ${hoveredArtist.name}` : "Hover over an artist"}</div>
+          <div className='font-mono text-white truncate max-w-sm sm:hidden'>{hoveredArtist ? `#${hoveredArtist.rank} - ${hoveredArtist.name}` : "Tap an artist"}</div>
         </div>
         
         <div className="overflow-x-auto">
@@ -40,7 +41,10 @@ export default function TopAlbumsCard({ user }) {
                 key={item.id || index}
                 onMouseEnter={() => setHoveredArtist({ name: item.name, rank: index + 1 })}
                 onMouseLeave={() => setHoveredArtist(null)}
-                className="flex-shrink-0 -ml-5 first:ml-0 relative z-10 hover:z-20"
+                className="flex-shrink-0 -ml-5 first:ml-0 relative"
+                style={{ 
+                  zIndex: hoveredArtist?.name === item.name ? 999 : getArtists('long').length - index 
+                }}
                 animate={{
                   translateY: hoveredArtist?.name === item.name ? -5 : 0,
                   scale: hoveredArtist?.name === item.name ? 1.2 : 1,
@@ -60,10 +64,11 @@ export default function TopAlbumsCard({ user }) {
           </div>
         </div>
       </div>
-      <div className="relative w-full">
-        <div className='flex space-x-4 sm:justify-between p-4 sm:px-12'>
+      <div className="relative w-full ">
+        <div className='flex sm:flex-row flex-col sm:space-x-4 justify-between p-4 sm:px-12'>
           <div className='font-mono text-white'>Top Artists - 6 Months</div>
-          <div className='font-mono text-white truncate max-w-sm'>{hoveredArtistMedium ? `#${hoveredArtistMedium.rank} - ${hoveredArtistMedium.name}` : "Hover over an artist"}</div>
+          <div className='font-mono text-white truncate max-w-sm hidden sm:block'>{hoveredArtistMedium ? `#${hoveredArtistMedium.rank} - ${hoveredArtistMedium.name}` : "Hover over an artist"}</div>
+          <div className='font-mono text-white truncate max-w-sm sm:hidden'>{hoveredArtistMedium ? `#${hoveredArtistMedium.rank} - ${hoveredArtistMedium.name}` : "Tap an artist"}</div>
         </div>
         
         <div className="overflow-x-auto">
@@ -73,7 +78,10 @@ export default function TopAlbumsCard({ user }) {
                 key={item.id || index}
                 onMouseEnter={() => setHoveredArtistMedium({ name: item.name, rank: index + 1 })}
                 onMouseLeave={() => setHoveredArtistMedium(null)}
-                className="flex-shrink-0 -ml-5 first:ml-0 relative z-10 hover:z-20"
+                className="flex-shrink-0 -ml-5 first:ml-0 relative"
+                style={{ 
+                  zIndex: hoveredArtistMedium?.name === item.name ? 999 : getArtists('long').length - index 
+                }}
                 animate={{
                   translateY: hoveredArtistMedium?.name === item.name ? -5 : 0,
                   scale: hoveredArtistMedium?.name === item.name ? 1.2 : 1,
@@ -93,10 +101,11 @@ export default function TopAlbumsCard({ user }) {
           </div>
         </div>
       </div>
-      <div className="relative w-full">
-        <div className='flex space-x-4 sm:justify-between p-4 sm:px-12'>
+      <div className="relative w-full ">
+        <div className='flex sm:flex-row flex-col sm:space-x-4 justify-between p-4 sm:px-12'>
           <div className='font-mono text-white'>Top Artists - Past Year</div>
-          <div className='font-mono text-white truncate max-w-sm'>{hoveredArtistLong ? `#${hoveredArtistLong.rank} - ${hoveredArtistLong.name}` : "Hover over an artist"}</div>
+          <div className='font-mono text-white truncate max-w-sm hidden sm:block'>{hoveredArtistLong ? `#${hoveredArtistLong.rank} - ${hoveredArtistLong.name}` : "Hover over an artist"}</div>
+          <div className='font-mono text-white truncate max-w-sm sm:hidden'>{hoveredArtistLong ? `#${hoveredArtistLong.rank} - ${hoveredArtistLong.name}` : "Tap an artist"}</div>
         </div>
         
         <div className="overflow-x-auto">
@@ -106,7 +115,10 @@ export default function TopAlbumsCard({ user }) {
                 key={item.id || index}
                 onMouseEnter={() => setHoveredArtistLong({ name: item.name, rank: index + 1 })}
                 onMouseLeave={() => setHoveredArtistLong(null)}
-                className="flex-shrink-0 -ml-5 first:ml-0 relative z-10 hover:z-20"
+                className="flex-shrink-0 -ml-5 first:ml-0 relative"
+                style={{ 
+                  zIndex: hoveredArtistLong?.name === item.name ? 999 : getArtists('long').length - index 
+                }}
                 animate={{
                   translateY: hoveredArtistLong?.name === item.name ? -5 : 0,
                   scale: hoveredArtistLong?.name === item.name ? 1.2 : 1,

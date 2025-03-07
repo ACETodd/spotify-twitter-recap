@@ -25,11 +25,12 @@ export default function TopMusicCard({ user }) {
   };
 
   return (
-    <div className='flex flex-col  sm:w-[700px] mb-48 sm:mb-0'>
+    <div className='flex flex-col  sm:w-1/2 mb-48 sm:bg-gray-800 sm:p-12 sm:rounded-sm'>
          <div className={"relative md:px-12"}>
-           <div className='flex space-x-4 justify-between mb-4 px-4'>
+           <div className='flex sm:flex-row flex-col sm:space-x-4 justify-between sm:mb-4 px-4 mt-4 sm:mt-0'>
              <div className='font-mono text-white'>Top Songs - recent</div>
-             <div className='font-mono text-white truncate max-w-sm'>{hoveredArtist ? `#${hoveredArtist.rank} - ${hoveredArtist.name}` : "Hover over a song"}</div>
+             <div className='font-mono text-white truncate max-w-xs hidden sm:block'>{hoveredArtist ? `#${hoveredArtist.rank} - ${hoveredArtist.name}` : "Hover over a song"}</div>
+             <div className='font-mono text-white truncate max-w-sm sm:hidden'>{hoveredArtist ? `#${hoveredArtist.rank} ${hoveredArtist.name}` : "Tap a song"}</div>
            </div>
            <div className="flex flex-row sm:justify-center px-14 sm:px-0 overflow-x-auto overflow-y-hidden h-40 pt-6 ">
              {getArtists('short').reverse().map((item, index) => (
@@ -56,9 +57,10 @@ export default function TopMusicCard({ user }) {
            </div>
          </div>
          <div className={"relative md:px-12"}>
-           <div className='flex space-x-4 justify-between mb-4 px-4'>
+           <div className='flex sm:flex-row flex-col sm:space-x-4 justify-between sm:mb-4 px-4 mt-4 sm:mt-0'>
              <div className='font-mono text-white'>Top Songs - 6 Months</div>
-             <div className='font-mono text-white truncate max-w-sm'>{hoveredArtistMedium ? `#${hoveredArtistMedium.rank} - ${hoveredArtistMedium.name}` : "Hover over a song"}</div>
+             <div className='font-mono text-white truncate max-w-xs hidden sm:block'>{hoveredArtistMedium ? `#${hoveredArtistMedium.rank} - ${hoveredArtistMedium.name}` : "Hover over a song"}</div>
+             <div className='font-mono text-white truncate max-w-sm sm:hidden'>{hoveredArtistMedium ? `#${hoveredArtistMedium.rank} ${hoveredArtistMedium.name}` : "Tap a song"}</div>
            </div>
            <div className="flex flex-row sm:justify-center px-14 sm:px-0 overflow-x-auto overflow-y-hidden h-40 pt-6 ">
              {getArtists('medium').reverse().map((item, index) => (
@@ -85,9 +87,10 @@ export default function TopMusicCard({ user }) {
            </div>
          </div>
          <div className={"relative md:px-12"}>
-           <div className='flex space-x-4 justify-between mb-4 px-4 '>
+           <div className='flex sm:flex-row flex-col sm:space-x-4 justify-between sm:mb-4 px-4 mt-4 sm:mt-0'>
              <div className='font-mono text-white'>Top Songs - Past Year</div>
-             <div className='font-mono text-white truncate max-w-sm'>{hoveredArtistLong ? `#${hoveredArtistLong.rank} - ${hoveredArtistLong.name}` : "Hover over a song"}</div>
+             <div className='font-mono text-white truncate max-w-xs hidden sm:block'>{hoveredArtistLong ? `#${hoveredArtistLong.rank} - ${hoveredArtistLong.name}` : "Hover over a song"}</div>
+             <div className='font-mono text-white truncate max-w-sm sm:hidden'>{hoveredArtistLong ? `#${hoveredArtistLong.rank} ${hoveredArtistLong.name}` : "Tap a song"}</div>
            </div>
            <div className="flex flex-row sm:justify-center px-14 sm:px-0 overflow-x-auto overflow-y-hidden h-40 pt-6 ">
              {getArtists('long').reverse().map((item, index) => (
