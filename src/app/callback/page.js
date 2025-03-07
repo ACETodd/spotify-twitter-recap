@@ -15,7 +15,7 @@ function CallbackContent() {
         method: "GET",
         headers: {
           Accept: "application/json",
-          Origin: "http://localhost:3000",
+          Origin: "https://spotify-twitter-recap.vercel.app/",
         },
         credentials: "include",
       })
