@@ -14,7 +14,7 @@ export default function NeuDesc({currentTrack, currentTrackIndex}) {
 
 
   return (
-    <div className='sm:px-0 px-4 '>
+    <div className='sm:px-0 px-4 text-black'>
        {/* <TypeAnimation
           sequence={[`#${rank}\n${trackName}\n${artistName}\n${albumName}\n{runTime}$`,1000]}          
           repeat={Infinity}
