@@ -26,6 +26,13 @@ export default function CDHolder({user, setCurrentTrack, setCurrentTrackIndex}) 
         if (length === "long") return user?.long_term_tracks?.items || [];
         return [];
       };
+    
+    const getTitle = (length) => {
+        if (length === "short") return 'Top Tracks - Recent';
+        if (length === "medium") return 'Top Tracks - Past 6 Months'
+        if (length === "long") return 'Top Tracks - Past Year'
+        return [];
+    }
 
     const getImageUrl = (item) => {
     if (item.album) {
@@ -126,6 +133,7 @@ export default function CDHolder({user, setCurrentTrack, setCurrentTrackIndex}) 
         </motion.div>
         </AnimatePresence>
     </div>
+    <div className='sm:hidden block font-mono font-semibold text-center pt-8'>{getTitle(songTerm)}</div>
 </div>
    
   )
