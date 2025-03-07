@@ -1,13 +1,133 @@
-import React, {useState, useEffect} from 'react'
-import { motion } from 'framer-motion';
+import React, {useState, useEffect, useRef} from 'react'
+import { motion, useAnimationControls } from 'framer-motion';
 
 export default function SongCD({currentTrack, size}) {
-
       const [animate, setAnimate] = useState(false)
+      const [rotation, setRotation] = useState(0);
+      const isDragging = useRef(false);
+      const lastAngle = useRef(0);
+      const lastTime = useRef(0);
+      const velocity = useRef(0);
+      const animationFrame = useRef(null);
+      const autoRotationRef = useRef(null);
+      const controls = useAnimationControls();
+
+      // Separate state to track user interaction
+      const [isUserInteracting, setIsUserInteracting] = useState(false);
       
+      const calculateAngle = (e, center) => {
+        const x = e.clientX - center.x;
+        const y = e.clientY - center.y;
+        return Math.atan2(y, x) * (180 / Math.PI);
+      };
+    
+      const handlePointerDown = (e) => {
+        setIsUserInteracting(true);
+        isDragging.current = true;
+        cancelAnimationFrame(animationFrame.current); // Stop existing momentum
+        cancelAnimationFrame(autoRotationRef.current); // Stop auto rotation
+        
+        // Stop the framer-motion animation
+        controls.stop();
+        
+        const rect = e.currentTarget.getBoundingClientRect();
+        const center = { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
+        lastAngle.current = calculateAngle(e, center);
+        lastTime.current = performance.now();
+      };
+    
+      const handlePointerMove = (e) => {
+        if (!isDragging.current) return;
+        const rect = e.currentTarget.getBoundingClientRect();
+        const center = { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 };
+        const newAngle = calculateAngle(e, center);
+        const now = performance.now();
+    
+        // Calculate angle difference and time difference
+        const angleDelta = newAngle - lastAngle.current;
+        const timeDelta = now - lastTime.current;
+        
+        // Normalize angle change across 360° boundaries
+        const adjustedDelta = angleDelta > 180 ? angleDelta - 360 : angleDelta < -180 ? angleDelta + 360 : angleDelta;
+        
+        // Apply a dampening factor to reduce the spinning speed (0.5 = half as fast)
+        const dampening = 0.4; // Adjust this value as needed
+        const dampedDelta = adjustedDelta * dampening;
+    
+        velocity.current = dampedDelta / (timeDelta / 16); // Approximate velocity (degrees per frame)
+        setRotation((prev) => prev + dampedDelta);
+    
+        lastAngle.current = newAngle;
+        lastTime.current = now;
+      };
+    
+      const handlePointerUp = () => {
+        isDragging.current = false;
+        applyMomentum();
+        
+        // After momentum ends (or immediately if no momentum), start auto rotation again
+        setTimeout(() => {
+          setIsUserInteracting(false);
+        }, Math.abs(velocity.current) < 0.1 ? 0 : 2000); // Wait for momentum to end
+      };
+    
+      const applyMomentum = () => {
+        if (Math.abs(velocity.current) < 0.1) {
+          // If velocity is too low, stop momentum and start auto rotation
+          setIsUserInteracting(false);
+          return;
+        }
+    
+        animationFrame.current = requestAnimationFrame(() => {
+          setRotation((prev) => prev + velocity.current);
+          velocity.current *= 0.97; // Apply friction to slow down
+          applyMomentum();
+        });
+      };
+      
+      // Function to handle auto rotation
+      const handleAutoRotation = () => {
+        if (isUserInteracting) return;
+        
+        setRotation(prevRotation => prevRotation + 0.1); // Small increment per frame
+        autoRotationRef.current = requestAnimationFrame(handleAutoRotation);
+      };
+      
+      // Start auto rotation whenever user is not interacting
       useEffect(() => {
-        setAnimate(false); // Reset animation
-        setTimeout(() => setAnimate(true), 50); // Delay to restart animation
+        if (!isUserInteracting) {
+          autoRotationRef.current = requestAnimationFrame(handleAutoRotation);
+        }
+        
+        return () => {
+          cancelAnimationFrame(autoRotationRef.current);
+        };
+      }, [isUserInteracting]);
+
+      useEffect(() => {
+        // Reset animation
+        setAnimate(false); 
+        
+        // Start the appearance animation
+        setTimeout(() => setAnimate(true), 50);
+        
+        // Ensure auto-rotation starts after appearance animation
+        setTimeout(() => {
+          // Reset user interaction state to false to trigger auto-rotation
+          setIsUserInteracting(false);
+          
+          // Explicitly start auto-rotation
+          if (autoRotationRef.current) {
+            cancelAnimationFrame(autoRotationRef.current);
+          }
+          autoRotationRef.current = requestAnimationFrame(handleAutoRotation);
+        }, 900); // 0.9 seconds delay as requested
+        
+        // Clean up animation frames on unmount
+        return () => {
+          cancelAnimationFrame(animationFrame.current);
+          cancelAnimationFrame(autoRotationRef.current);
+        };
       }, [currentTrack]);
     
       const outerRingSize = size * 0.96; 
@@ -21,10 +141,6 @@ export default function SongCD({currentTrack, size}) {
 
       const albumImage = currentTrack?.album?.images?.[0]?.url || '/api/placeholder/300/300';
 
-      const trackName = currentTrack?.name || 'No Track Selected';
-
-  
-
   return (
     <div>
         <motion.div 
@@ -34,9 +150,8 @@ export default function SongCD({currentTrack, size}) {
             width: `${size}px`,
             height: `${size}px`,
             borderRadius: `${size / 2}px`,
-            // Fixed positioning adjustment - position from bottom of viewport for consistent appearance
-            // bottom: `-${size * 0.54}px`,
             transform: "translate(-50%, -50%)",
+            rotate: `${rotation}deg`,
             background: `
               radial-gradient(circle at 50% 50%, 
                 #ffffff 0%, 
@@ -58,19 +173,11 @@ export default function SongCD({currentTrack, size}) {
             `,
             backgroundBlendMode: "screen, overlay"
           }}
-        //   initial={{ x: "-50%", y: "-50%" }}
-        //   animate={{ 
-        //     rotate: 360,
-        //     x: "-50%"
-        //   }}
-        //   transition={{
-        //     rotate: {
-        //       duration: 20,
-        //       ease: "linear",
-        //       repeat: Infinity
-        //     }
-        //   }}
-        initial={{ 
+          onPointerDown={handlePointerDown}
+          onPointerMove={handlePointerMove}
+          onPointerUp={handlePointerUp}
+          onPointerLeave={handlePointerUp}
+          initial={{ 
             y: "100vh",
             scale: 1.2, 
             opacity: 0, 
@@ -80,14 +187,11 @@ export default function SongCD({currentTrack, size}) {
             y: "-50%",
             scale: 1,   
             opacity: 1,
-            rotate: 360  
           } : {}}
           transition={{
             y: { duration: 0.7, ease: "easeInOut" }, // Smooth slide-up
-            scale: { duration: 0.3, delay: 0.7 },   // "Click" effect
-            rotate: { duration: 20, ease: "linear", repeat: Infinity, delay: 1.1 } // Continuous spin
+            scale: { duration: 0.3, delay: 0.7 },    // "Click" effect
           }}
-                    
         >
           {/* Light Reflection Effect */}
           <div 
@@ -95,7 +199,6 @@ export default function SongCD({currentTrack, size}) {
           >
           <img
                 src={albumImage}
-                // alt={trackName || 'Album Cover'}
                 className='pointer-events-none select-none object-cover'
                 sizes='(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw'
                 />

@@ -11,6 +11,7 @@ import Carousel from './Carousel'
 import CDHolder from './CDHolder'
 import SongCD from './SongCD';
 import NeuDesc from './NeuDesc'
+import SpinnableCD from './testspinner'
 
 export default function Login({ user, handleLogout }) {
 
