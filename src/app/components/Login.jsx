@@ -1,13 +1,4 @@
 import { useEffect, useState, useRef, useLayoutEffect } from "react";
-import { motion } from "framer-motion";
-import TopMusicCard from './TopMusicCard'
-import Icerber from './iceber'
-import Genres from './Genres'
-import TopAlbumsCard from './TopAlbumsCard'
-import Player from './Player'
-import PlayerTest  from './PlayerTest'
-import GenreList from "./GenreList";
-import Carousel from './Carousel'
 import CDHolder from './CDHolder'
 import SongCD from './SongCD';
 import NeuDesc from './NeuDesc'
@@ -92,7 +83,7 @@ export default function Login({ user, handleLogout }) {
 
             {/* CD Player Start */}
             <div 
-              className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-gray-200 shadow-[inset_8px_8px_16px_#b8bcc6,inset_-8px_-8px_16px_#ffffff] flex items-center justify-center"
+              className="absolute left-1/2 top-[60%] sm:top-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-gray-200 shadow-[inset_8px_8px_16px_#b8bcc6,inset_-8px_-8px_16px_#ffffff] flex items-center justify-center"
               style={{
                 width: `${size}px`,
                 height: `${size}px`,
@@ -117,7 +108,7 @@ export default function Login({ user, handleLogout }) {
                 </div>
               </div>
         
-        <div className="sm:w-1/4 h-72 sm:h-full">
+        <div className="sm:w-1/4 h-44 sm:h-full">
         <NeuDesc currentTrack={currentTrack} currentTrackIndex={currentTrackIndex}/>
         </div>
 
