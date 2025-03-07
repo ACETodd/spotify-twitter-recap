@@ -24,7 +24,7 @@ export default function Home() {
   };
 
   return (
-    <div>
+    <div className="bg-gradient-to-br from-gray-200 to-gray-300 min-h-screen">
       <Login user={user} onLogin={() => {}} handleLogout={() => handleLogout()} />
     </div>
   );
