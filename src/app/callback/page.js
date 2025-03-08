@@ -44,7 +44,7 @@ function CallbackContent() {
 
   return (
     <div className="flex items-center justify-center min-h-screen">
-      <div className="text-center text-xl mb-4 text-white font-mono">
+      <div className="text-center text-xl mb-4 text-black font-mono">
         <TypeAnimation sequence={["Logging in to Spotify...", 300]} repeat={Infinity} />
       </div>
     </div>
@@ -53,7 +53,7 @@ function CallbackContent() {
 
 export default function Callback() {
   return (
-    <Suspense fallback={<div className="text-white text-center">Loading...?</div>}>
+    <Suspense fallback={<div className="text-black text-center">Loading...?</div>}>
       <CallbackContent />
     </Suspense>
   );
