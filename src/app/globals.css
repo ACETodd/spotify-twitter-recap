@@ -22,6 +22,12 @@ body {
   overflow-x: hidden;
 }
 
+@media (min-width: 640px) {
+  body {
+    overflow-y: hidden;
+  }
+}
+
 .perspective-500 {
   perspective: 500px;
 }
