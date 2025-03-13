@@ -105,7 +105,7 @@ export default function CDHolder({user, setCurrentTrack, setCurrentTrackIndex}) 
   
 
   return (
-    <div className='px-2 mt-12 sm:mt-0'>
+    <div className='px-2 mt-2 sm:mt-0'>
     <NeuHolderBtns setSongTerm={handleTermChange} className="mt-4 sm:mt-0 bg-r"/>
     <div className="
         /* Mobile (default): horizontal layout at the top */
@@ -147,7 +147,7 @@ export default function CDHolder({user, setCurrentTrack, setCurrentTrackIndex}) 
         </motion.div>
         </AnimatePresence>
     </div>
-    <div className='sm:hidden block font-mono font-semibold text-center pt-8'>{getTitle(songTerm)}</div>
+    <div className='sm:hidden block font-mono font-semibold text-center pt-6'>{getTitle(songTerm)}</div>
 </div>
    
   )
