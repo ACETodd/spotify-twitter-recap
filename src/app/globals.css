@@ -35,3 +35,29 @@ body {
 .transform-style-3d {
   transform-style: preserve-3d;
 }
+
+/* In your global CSS file */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none; /* For Chrome, Safari, and Opera */
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none; /* For Internet Explorer 10+ */
+  scrollbar-width: none; /* For Firefox */
+}
+
+.clip-path-top {
+  clip-path: polygon(50% 0%, 100% 50%, 50% 50%, 0% 50%);
+}
+
+.clip-path-right {
+  clip-path: polygon(50% 0%, 100% 50%, 100% 100%, 50% 50%);
+}
+
+.clip-path-bottom {
+  clip-path: polygon(0% 50%, 50% 50%, 100% 50%, 50% 100%);
+}
+
+.clip-path-left {
+  clip-path: polygon(0% 0%, 50% 50%, 50% 100%, 0% 50%);
+}
