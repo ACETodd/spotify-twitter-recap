@@ -134,7 +134,8 @@ export default function Header({setCurrentPage, currentPage}) {
             {/* {currentPage} */}
         </div>
         <div className='font-mono font-semibold text-xl '>
-                    {currentPage === 'ArtistPage' ? '[Music] // Top Artists'  :  '[Music] // Top Songs'}
+          [Music]
+          <span className='font-normal text-lg'>{currentPage === 'ArtistPage' ? ' // Top Artists'  :  ' // Top Songs'}</span>
         </div>
 
 
