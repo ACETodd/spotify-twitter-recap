@@ -6,7 +6,7 @@ export default function ArtistPage({user}) {
   const [selectedArtist, setSelectedArtist] = useState(null);
 
   return (
-    <div className="max-h-screen sm:max-h-none sm:min-h-screen  flex justify-center items-center bg-gradient-to-br from-gray-200 to-gray-300 mt-28 sm:mt-0 overflow-y-hidden scrollbar-hide">
+    <div className="max-h-screen sm:max-h-none sm:min-h-screen  flex justify-center items-center bg-gradient-to-br from-gray-200 to-gray-300 mt-4 sm:mt-0 overflow-y-hidden scrollbar-hide">
       <div className="flex flex-col sm:flex-row items-center">
         {/* Empty space on the right to balance the layout */}
 
