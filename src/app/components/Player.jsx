@@ -86,7 +86,7 @@ export default function Player({user, setSelectedArtist, selectedArtist}) {
       <div className="relative">
       {/* Headphone jack positioned behind with negative z-index */}
       
-      <div className='rounded-3xl bg-gradient-to-tr from-gray-200 to-gray-300 w-[350px] sm:w-96 h-[500px] pt-1 z-20 relative'
+      <div className='rounded-3xl bg-gradient-to-tr from-gray-200 to-gray-300 w-[370px] sm:w-96 h-[500px] pt-1 z-20 relative'
           style={{
               boxShadow: '12px 12px 24px #b8b8b8, -4px -4px 10px #ffffff, inset 2px 2px 5px rgba(255, 255, 255, 0.7), inset -2px -2px 5px rgba(184, 184, 184, 0.3)'
           }}
@@ -131,7 +131,7 @@ export default function Player({user, setSelectedArtist, selectedArtist}) {
           />
       </div>
       <motion.div 
-      className="fixed  z-10 mt-6 sm:ml-80 ml-64"
+      className="fixed  z-10 mt-6 sm:ml-80 ml-72"
       initial={{ y: 100, opacity: 0 }} // Start from below and invisible
       animate={{ 
         y: isVisible ? -80 : 100, // Move to final position when visible
