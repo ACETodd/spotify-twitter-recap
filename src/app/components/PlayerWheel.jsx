@@ -20,8 +20,11 @@ export default function PlayerWheel({skipForwardRef, skipBackRef, handleNextTerm
   // Mobile handlers
   const handleTouchStart = () => setIsPressed(true);
   const handleTouchEnd = () => {
-    setIsPressed(false);
-    clickArtist();
+    if (isMobile) {
+      setIsPressed(false);
+      clickArtist();
+    }
+   
   };
   
   // Desktop handler - single click behavior
