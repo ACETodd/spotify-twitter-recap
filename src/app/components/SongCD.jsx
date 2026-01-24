@@ -1,8 +1,7 @@
 import React, {useState, useEffect, useRef} from 'react'
-import { motion, useAnimationControls } from 'framer-motion';
+import { motion, useAnimationControls, AnimatePresence  } from 'framer-motion';
 
-export default function SongCD({currentTrack, size}) {
-      const [animate, setAnimate] = useState(false)
+export default function SongCD({currentTrack, size, isPlaying}) {
       const [rotation, setRotation] = useState(0);
       const isDragging = useRef(false);
       const lastAngle = useRef(0);
@@ -12,9 +11,69 @@ export default function SongCD({currentTrack, size}) {
       const autoRotationRef = useRef(null);
       const controls = useAnimationControls();
 
+      // NEW: websocket refs
+      const wsRef = useRef(null);
+      const [backendBase, setBackendBase] = useState("");
+      const [frameId, setFrameId] = useState(null);
+      
       // Separate state to track user interaction
       const [isUserInteracting, setIsUserInteracting] = useState(false);
-      
+      const [entranceComplete, setEntranceComplete] = useState(false);
+
+
+      // derive base + frame id (frame stores id in localStorage)
+      useEffect(() => {
+        try {
+          const host = window.location.hostname;
+          const base = host === "localhost" ? "http://192.168.1.72:8000" : `http://${host}:8000`;
+          setBackendBase(base);
+          setFrameId(localStorage.getItem("frame_id") || null);
+        } catch {}
+      }, []);
+
+      // Connect WebSocket as the DISPLAY; apply incoming deltas
+      useEffect(() => {
+        if (!backendBase || !frameId) return;
+        const wsBase = backendBase.replace(/^http/, "ws");
+        const ws = new WebSocket(`${wsBase}/ws/${encodeURIComponent(frameId)}`);
+        wsRef.current = ws;
+
+        ws.onmessage = (evt) => {
+          try {
+            const msg = JSON.parse(evt.data);
+            if (msg.type === "rotate" && typeof msg.delta === "number") {
+              setIsUserInteracting(true);
+              setRotation((prev) => prev + msg.delta);
+              if (autoRotationRef.current) cancelAnimationFrame(autoRotationRef.current);
+              setTimeout(() => setIsUserInteracting(false), 500);
+            }
+            if (msg.type === "setRotation" && typeof msg.value === "number") {
+              setIsUserInteracting(true);
+              setRotation(msg.value);
+              setTimeout(() => setIsUserInteracting(false), 500);
+            }
+          } catch {}
+        };
+
+        ws.onclose = () => {
+          wsRef.current = null;
+        };
+
+        return () => {
+          try { ws.close(); } catch {}
+        };
+      }, [backendBase, frameId]);
+
+      const getAlbumArtistKey = (track) => {
+        if (!track) return null;
+        const albumImage = track?.album?.images?.[0]?.url || '';
+        const albumName = track?.album?.name?.trim().toLowerCase() || 'unknown-album';
+        return `${albumName}-${albumImage}`;
+      };
+
+
+      const albumArtistKey = getAlbumArtistKey(currentTrack);
+
       const calculateAngle = (e, center) => {
         const x = e.clientX - center.x;
         const y = e.clientY - center.y;
@@ -87,7 +146,7 @@ export default function SongCD({currentTrack, size}) {
       
       // Function to handle auto rotation
       const handleAutoRotation = () => {
-        if (isUserInteracting) return;
+        if (isUserInteracting || !isPlaying || !entranceComplete) return;
         
         setRotation(prevRotation => prevRotation + 0.1); // Small increment per frame
         autoRotationRef.current = requestAnimationFrame(handleAutoRotation);
@@ -95,40 +154,55 @@ export default function SongCD({currentTrack, size}) {
       
       // Start auto rotation whenever user is not interacting
       useEffect(() => {
-        if (!isUserInteracting) {
+        if (!isUserInteracting && isPlaying && entranceComplete) {
           autoRotationRef.current = requestAnimationFrame(handleAutoRotation);
         }
         
         return () => {
           cancelAnimationFrame(autoRotationRef.current);
         };
-      }, [isUserInteracting]);
+      }, [isUserInteracting, isPlaying, entranceComplete]);
+
+      // Track if album/artist changed to control entrance animation
+      const prevAlbumArtistKey = useRef(null);
 
       useEffect(() => {
-        // Reset animation
-        setAnimate(false); 
-        
-        // Start the appearance animation
-        setTimeout(() => setAnimate(true), 50);
-        
-        // Ensure auto-rotation starts after appearance animation
-        setTimeout(() => {
-          // Reset user interaction state to false to trigger auto-rotation
-          setIsUserInteracting(false);
-          
-          // Explicitly start auto-rotation
-          if (autoRotationRef.current) {
+        if (!currentTrack) return;
+
+        const prevKey = prevAlbumArtistKey.current;
+        const newKey = albumArtistKey;
+
+        const albumChanged = prevKey !== newKey;
+
+        if (albumChanged) {
+          // Album changed — run entrance animation
+          setEntranceComplete(false);
+          setRotation(0);
+          prevAlbumArtistKey.current = newKey;
+
+          const timer = setTimeout(() => {
+            setEntranceComplete(true);
+            setIsUserInteracting(false);
+
+            // Restart auto rotation cleanly
             cancelAnimationFrame(autoRotationRef.current);
-          }
-          autoRotationRef.current = requestAnimationFrame(handleAutoRotation);
-        }, 900); // 0.9 seconds delay as requested
-        
-        // Clean up animation frames on unmount
-        return () => {
-          cancelAnimationFrame(animationFrame.current);
+            autoRotationRef.current = requestAnimationFrame(handleAutoRotation);
+          }, 1200);
+
+          return () => {
+            clearTimeout(timer);
+            cancelAnimationFrame(animationFrame.current);
+            cancelAnimationFrame(autoRotationRef.current);
+          };
+        } else {
+          // Same album — ensure it’s ready to spin immediately
+          setEntranceComplete(true);
+          setIsUserInteracting(false);
           cancelAnimationFrame(autoRotationRef.current);
-        };
-      }, [currentTrack]);
+          autoRotationRef.current = requestAnimationFrame(handleAutoRotation);
+        }
+      }, [currentTrack, albumArtistKey]);
+
     
       const outerRingSize = size * 0.96; 
       const centerHoleSize = size * 0.3;  
@@ -142,9 +216,10 @@ export default function SongCD({currentTrack, size}) {
       const albumImage = currentTrack?.album?.images?.[0]?.url || '/api/placeholder/300/300';
 
   return (
-    <div>
+    <AnimatePresence mode="wait">
+      {currentTrack && (
         <motion.div 
-          key={currentTrack?.id || 'default'}
+          key={albumArtistKey} // CRITICAL: This key makes the animation work on track change
           className="fixed left-1/2 top-1/2 z-[1001] flex origin-center select-none items-center justify-center border-2 border-[#d3d3d3] shadow-[0_0_80px_-20px_rgba(0,0,0,0.3)] text-white"
           style={{
             width: `${size}px`,
@@ -183,14 +258,21 @@ export default function SongCD({currentTrack, size}) {
             opacity: 0, 
             x: "-50%"
           }}
-          animate={animate ? { 
+          animate={{ 
             y: "-50%",
             scale: 1,   
             opacity: 1,
-          } : {}}
+          }}
+          exit={{
+            y: "100vh",
+            scale: 0.8,
+            opacity: 0,
+            transition: { duration: 0.2 }
+          }}
           transition={{
             y: { duration: 0.7, ease: "easeInOut" }, // Smooth slide-up
             scale: { duration: 0.3, delay: 0.7 },    // "Click" effect
+            opacity: { duration: 0.3 }
           }}
         >
           {/* Light Reflection Effect */}
@@ -238,8 +320,8 @@ export default function SongCD({currentTrack, size}) {
               style={{ width: `${centerCircleSize}px`, height: `${centerCircleSize}px` }}
             ></div>
           </div>
-      </motion.div>
-            
-  </div>
+        </motion.div>
+      )}
+    </AnimatePresence>
   )
 }

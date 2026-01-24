@@ -11,13 +11,16 @@ export default {
         background: "var(--background)",
         foreground: "var(--foreground)",
       },
-        '.no-scrollbar::-webkit-scrollbar': {
-        display: 'none',
+      keyframes: {
+        fadeIn: {
+          '0%': { opacity: '0' },
+          '100%': { opacity: '1' }
+        }
       },
-        '.no-scrollbar': {
-        '-ms-overflow-style': 'none',
-        'scrollbar-width': 'none',
-      },
+      animation: {
+        fadeIn: 'fadeIn 4.5s ease-in-out',
+        fadeOut: 'fadeOut 0.5s ease-in-out'
+      }
     },
   },
   plugins: [],
