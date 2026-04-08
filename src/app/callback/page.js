@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { TypeAnimation } from "react-type-animation";
 
@@ -20,7 +20,7 @@ function CallbackContent() {
         method: "GET",
         headers: {
           Accept: "application/json",
-          Origin: "http://localhost:3000/",
+          // Origin: "http://localhost:3000/",
         },
         credentials: "include",
       })
@@ -57,5 +57,9 @@ function CallbackContent() {
 }
 
 export default function Callback() {
-  return <CallbackContent />;
+  return (
+    <Suspense fallback={<div className="flex items-center justify-center min-h-screen">Loading...</div>}>
+      <CallbackContent />
+    </Suspense>
+  );
 }

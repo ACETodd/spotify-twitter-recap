@@ -37,9 +37,7 @@ export default function PairedSuccess() {
   const centerCircleSize = discSize * 0.12;
 
   useEffect(() => {
-    const host = window.location.hostname;
-    const base = host === "localhost" ? "http://192.168.1.72:8000" : `http://${host}:8000`;
-    setBackendBase(base);
+    setBackendBase("https://framebackend.onrender.com");
     if (frameId) localStorage.setItem("frame_id", frameId);
   }, [frameId]);
 
