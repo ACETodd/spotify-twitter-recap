@@ -33,11 +33,13 @@ export default function Login({ user, setUser, handleLogout }) {
         (typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : `frame-${Date.now()}`);
       localStorage.setItem('frame_id', existing);
       setFrameId(existing);
-      const LAN_IP = "192.168.1.72";
-      const pairOrigin = window.location.origin.includes("localhost")
-        ? `http://${LAN_IP}:3000`
-        : window.location.origin;
+      // const LAN_IP = "192.168.1.72";
+      // const pairOrigin = window.location.origin.includes("localhost")
+      //   ? `http://${LAN_IP}:3000`
+      //   : window.location.origin;
 
+      // setPairUrl(`${pairOrigin}/pair?frame_id=${existing}`);
+      const pairOrigin = window.location.origin;
       setPairUrl(`${pairOrigin}/pair?frame_id=${existing}`);
     }
   }, []);
