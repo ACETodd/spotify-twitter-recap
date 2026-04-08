@@ -3,12 +3,13 @@ import CDHolder from './CDHolder'
 import SongCD from './SongCD';
 import NeuDesc from './NeuDesc'
 import SpinnableCD from './testspinner'
+import { getValidAccessToken } from "./../getValidToken";
 
-export default function SongPage({user}) {
+export default function SongPage({user, setUser}) {
 
   const [currentTrack, setCurrentTrack] = useState(null);
   const [currentTrackIndex, setCurrentTrackIndex] = useState(null)
-  const [size, setSize] = useState(560);
+  const [size, setSize] = useState(700);
   const hubSize = size * 0.18; // Adjusted proportionally to `size`
   const middleRingSize = hubSize * 0.6;
   const spindleHoleSize = hubSize * 0.2
@@ -20,7 +21,7 @@ export default function SongPage({user}) {
   useLayoutEffect(() => {
     const updateSize = () => {
       const viewportWidth = window.innerWidth;
-      const newSize = Math.min(Math.max(viewportWidth * 0.5, 280), 560);
+      const newSize = Math.min(viewportWidth * 0.6, 900);
       setSize(newSize);
     };
   
@@ -35,9 +36,26 @@ export default function SongPage({user}) {
 
     const fetchCurrentlyPlaying = async () => {
       try {
-        const res = await fetch(
-          `http://localhost:8000/currently-playing?access_token=${user.access_token}`
+        const token = await getValidAccessToken(user, setUser);
+        if (!token) {
+          console.warn("No valid token; need to login again.");
+          return;
+        }
+
+        let res = await fetch(
+          `https://framebackend.onrender.com/currently-playing?access_token=${token}`
         );
+
+        // If Spotify says 401 anyway, force refresh once and retry
+        if (res.status === 401) {
+          const token2 = await getValidAccessToken({ ...user, expires_at: 0 }, setUser);
+          if (!token2) return;
+
+          res = await fetch(
+            `https://framebackend.onrender.com/currently-playing?access_token=${token2}`
+          );
+        }
+
 
         if (!res.ok) {
           if (res.status === 401) {
@@ -89,7 +107,7 @@ export default function SongPage({user}) {
     fetchCurrentlyPlaying();
     const interval = setInterval(fetchCurrentlyPlaying, 5000);
     return () => clearInterval(interval);
-  }, [user?.access_token]);
+  }, [user, setUser]);
 
 
   return (

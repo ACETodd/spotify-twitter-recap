@@ -24,9 +24,7 @@ export default function SongCD({currentTrack, size, isPlaying}) {
       // derive base + frame id (frame stores id in localStorage)
       useEffect(() => {
         try {
-          const host = window.location.hostname;
-          const base = host === "localhost" ? "http://192.168.1.72:8000" : `http://${host}:8000`;
-          setBackendBase(base);
+          setBackendBase("https://framebackend.onrender.com");;
           setFrameId(localStorage.getItem("frame_id") || null);
         } catch {}
       }, []);
@@ -145,23 +143,23 @@ export default function SongCD({currentTrack, size, isPlaying}) {
       };
       
       // Function to handle auto rotation
-      const handleAutoRotation = () => {
-        if (isUserInteracting || !isPlaying || !entranceComplete) return;
+      // const handleAutoRotation = () => {
+      //   if (isUserInteracting || !isPlaying || !entranceComplete) return;
         
-        setRotation(prevRotation => prevRotation + 0.1); // Small increment per frame
-        autoRotationRef.current = requestAnimationFrame(handleAutoRotation);
-      };
+      //   setRotation(prevRotation => prevRotation + 0.1); // Small increment per frame
+      //   autoRotationRef.current = requestAnimationFrame(handleAutoRotation);
+      // };
       
-      // Start auto rotation whenever user is not interacting
-      useEffect(() => {
-        if (!isUserInteracting && isPlaying && entranceComplete) {
-          autoRotationRef.current = requestAnimationFrame(handleAutoRotation);
-        }
+      // // Start auto rotation whenever user is not interacting
+      // useEffect(() => {
+      //   if (!isUserInteracting && isPlaying && entranceComplete) {
+      //     autoRotationRef.current = requestAnimationFrame(handleAutoRotation);
+      //   }
         
-        return () => {
-          cancelAnimationFrame(autoRotationRef.current);
-        };
-      }, [isUserInteracting, isPlaying, entranceComplete]);
+      //   return () => {
+      //     cancelAnimationFrame(autoRotationRef.current);
+      //   };
+      // }, [isUserInteracting, isPlaying, entranceComplete]);
 
       // Track if album/artist changed to control entrance animation
       const prevAlbumArtistKey = useRef(null);
@@ -175,33 +173,23 @@ export default function SongCD({currentTrack, size, isPlaying}) {
         const albumChanged = prevKey !== newKey;
 
         if (albumChanged) {
-          // Album changed — run entrance animation
+          // Album changed — run entrance animation, then allow spin
           setEntranceComplete(false);
-          setRotation(0);
           prevAlbumArtistKey.current = newKey;
 
           const timer = setTimeout(() => {
             setEntranceComplete(true);
             setIsUserInteracting(false);
+          }, 2000); // match your entrance animation total time
 
-            // Restart auto rotation cleanly
-            cancelAnimationFrame(autoRotationRef.current);
-            autoRotationRef.current = requestAnimationFrame(handleAutoRotation);
-          }, 1200);
-
-          return () => {
-            clearTimeout(timer);
-            cancelAnimationFrame(animationFrame.current);
-            cancelAnimationFrame(autoRotationRef.current);
-          };
+          return () => clearTimeout(timer);
         } else {
-          // Same album — ensure it’s ready to spin immediately
+          // Same album — no entrance animation needed
           setEntranceComplete(true);
           setIsUserInteracting(false);
-          cancelAnimationFrame(autoRotationRef.current);
-          autoRotationRef.current = requestAnimationFrame(handleAutoRotation);
         }
       }, [currentTrack, albumArtistKey]);
+
 
     
       const outerRingSize = size * 0.96; 
@@ -214,66 +202,64 @@ export default function SongCD({currentTrack, size, isPlaying}) {
       const centerCircleSize = size * 0.12;  
 
       const albumImage = currentTrack?.album?.images?.[0]?.url || '/api/placeholder/300/300';
+      const shouldSpin = entranceComplete && isPlaying;
 
   return (
     <AnimatePresence mode="wait">
-      {currentTrack && (
-        <motion.div 
-          key={albumArtistKey} // CRITICAL: This key makes the animation work on track change
-          className="fixed left-1/2 top-1/2 z-[1001] flex origin-center select-none items-center justify-center border-2 border-[#d3d3d3] shadow-[0_0_80px_-20px_rgba(0,0,0,0.3)] text-white"
+      {!currentTrack ? (
+        <motion.div
+            key={albumArtistKey}
+            className="fixed left-1/2 top-1/2 z-[1001]"
+            style={{
+              width: `${size}px`,
+              height: `${size}px`,
+              borderRadius: `${size / 2}px`,
+              transform: "translate(-50%, -50%)",
+              willChange: "transform, opacity",
+              backfaceVisibility: "hidden",
+              transformStyle: "preserve-3d",
+            }}
+            initial={{ x: -size / 2, y: 800, scale: 1.2, opacity: 0 }}
+            // animate={{ x: -size / 2, y: -size / 2, scale: 1, opacity: 1 }}
+            exit={{ x: -size / 2, y: 800, scale: 1, opacity: .5, transition: { duration: 0.9, ease: "easeInOut" } }}
+            animate={{ x: -size / 2, y: -size / 2, scale: [1.15, 0.98, 1], opacity: 1 }}
+            transition={{
+              y: { duration: 0.7, ease: "easeInOut" },
+              scale: { times: [0, 0.75, 1], duration: 0.35, delay: 0.55, ease: "easeOut" },
+              opacity: { duration: 0.3 }
+            }}
+          >
+        {/* INNER DISC: SPIN + VISUALS */}
+        <div
+          className={`w-full h-full rounded-full ${
+            shouldSpin ? "cd-spin-inner" : "cd-spin-inner cd-paused"
+          }`}
           style={{
-            width: `${size}px`,
-            height: `${size}px`,
-            borderRadius: `${size / 2}px`,
-            transform: "translate(-50%, -50%)",
-            rotate: `${rotation}deg`,
             background: `
-              radial-gradient(circle at 50% 50%, 
-                #ffffff 0%, 
-                #d1d1d1 25%, 
-                #a8a8a8 50%, 
-                #808080 75%, 
+              radial-gradient(circle at 50% 50%,
+                #ffffff 0%,
+                #d1d1d1 25%,
+                #a8a8a8 50%,
+                #808080 75%,
                 #cfcfcf 100%
-              ), 
+              ),
               conic-gradient(
-                from 0deg, 
-                rgba(255, 0, 255, 0.3) 0deg, 
-                rgba(0, 255, 255, 0.3) 60deg, 
-                rgba(255, 255, 0, 0.3) 120deg, 
-                rgba(255, 0, 255, 0.3) 180deg, 
-                rgba(0, 255, 255, 0.3) 240deg, 
-                rgba(255, 255, 0, 0.3) 300deg, 
+                from 0deg,
+                rgba(255, 0, 255, 0.3) 0deg,
+                rgba(0, 255, 255, 0.3) 60deg,
+                rgba(255, 255, 0, 0.3) 120deg,
+                rgba(255, 0, 255, 0.3) 180deg,
+                rgba(0, 255, 255, 0.3) 240deg,
+                rgba(255, 255, 0, 0.3) 300deg,
                 rgba(255, 0, 255, 0.3) 360deg
               )
             `,
-            backgroundBlendMode: "screen, overlay"
+            backgroundBlendMode: "screen, overlay",
           }}
           onPointerDown={handlePointerDown}
           onPointerMove={handlePointerMove}
           onPointerUp={handlePointerUp}
           onPointerLeave={handlePointerUp}
-          initial={{ 
-            y: "100vh",
-            scale: 1.2, 
-            opacity: 0, 
-            x: "-50%"
-          }}
-          animate={{ 
-            y: "-50%",
-            scale: 1,   
-            opacity: 1,
-          }}
-          exit={{
-            y: "100vh",
-            scale: 0.8,
-            opacity: 0,
-            transition: { duration: 0.2 }
-          }}
-          transition={{
-            y: { duration: 0.7, ease: "easeInOut" }, // Smooth slide-up
-            scale: { duration: 0.3, delay: 0.7 },    // "Click" effect
-            opacity: { duration: 0.3 }
-          }}
         >
           {/* Light Reflection Effect */}
           <div 
@@ -319,6 +305,109 @@ export default function SongCD({currentTrack, size, isPlaying}) {
               className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border-[1px] border-[#c8c7c5] bg-[#f5f5f5] shadow-[0_0_24px_-12px_rgba(0,0,0,0.30)_inset]"
               style={{ width: `${centerCircleSize}px`, height: `${centerCircleSize}px` }}
             ></div>
+          </div>
+          </div>
+        </motion.div>
+      ): (
+         <motion.div
+            key={albumArtistKey}
+            className="fixed left-1/2 top-1/2 z-[1001]"
+            style={{
+              width: `${size}px`,
+              height: `${size}px`,
+              borderRadius: `${size / 2}px`,
+              transform: "translate(-50%, -50%)",
+              willChange: "transform, opacity",
+              backfaceVisibility: "hidden",
+              transformStyle: "preserve-3d",
+            }}
+            initial={{ x: -size / 2, y: 800, scale: 1.2, opacity: 0 }}
+            // animate={{ x: -size / 2, y: -size / 2, scale: 1, opacity: 1 }}
+            exit={{ x: -size / 2, y: 800, scale: 1, opacity: .5, transition: { duration: 0.9, ease: "easeInOut" } }}
+            animate={{ x: -size / 2, y: -size / 2, scale: [1.15, 0.98, 1], opacity: 1 }}
+            transition={{
+              y: { duration: 0.7, ease: "easeInOut" },
+              scale: { times: [0, 0.75, 1], duration: 0.35, delay: 0.55, ease: "easeOut" },
+              opacity: { duration: 0.3 }
+            }}
+          >
+        {/* INNER DISC: SPIN + VISUALS */}
+        <div
+          className={`w-full h-full rounded-full ${
+            shouldSpin ? "cd-spin-inner" : "cd-spin-inner cd-paused"
+          }`}
+          style={{
+            background: `
+              radial-gradient(circle at 50% 50%,
+                #ffffff 0%,
+                #d1d1d1 25%,
+                #a8a8a8 50%,
+                #808080 75%,
+                #cfcfcf 100%
+              ),
+              conic-gradient(
+                from 0deg,
+                rgba(255, 0, 255, 0.3) 0deg,
+                rgba(0, 255, 255, 0.3) 60deg,
+                rgba(255, 255, 0, 0.3) 120deg,
+                rgba(255, 0, 255, 0.3) 180deg,
+                rgba(0, 255, 255, 0.3) 240deg,
+                rgba(255, 255, 0, 0.3) 300deg,
+                rgba(255, 0, 255, 0.3) 360deg
+              )
+            `,
+            backgroundBlendMode: "screen, overlay",
+          }}
+          onPointerDown={handlePointerDown}
+          onPointerMove={handlePointerMove}
+          onPointerUp={handlePointerUp}
+          onPointerLeave={handlePointerUp}
+        >
+          {/* Light Reflection Effect */}
+          <div 
+            className="absolute inset-0 rounded-full overflow-hidden"
+          >
+          <img
+                src={albumImage}
+                className='pointer-events-none select-none object-cover'
+                sizes='(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw'
+                />
+          </div>
+          {/* Center Hole and CD Details */}
+          <div className='absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 items-center justify-center'>
+            <div 
+              className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border-[0.1px] border-white bg-transparent opacity-35"
+              style={{ width: `${outerRingSize}px`, height: `${outerRingSize}px` }}
+            ></div>
+            <div 
+              className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border-[0.75px] border-white backdrop-blur-sm"
+              style={{ width: `${centerHoleSize}px`, height: `${centerHoleSize}px` }}
+            ></div>
+            <div 
+              className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border-[5px] border-dotted border-gray-200/15"
+              style={{ width: `${dottedRingSize}px`, height: `${dottedRingSize}px` }}
+            ></div>
+            <div 
+              className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border-[0.8px] border-white bg-[#c3c3c5] opacity-70"
+              style={{ width: `${innerRingSize}px`, height: `${innerRingSize}px` }}
+            ></div>
+            <div 
+              className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#bdbabc]"
+              style={{ width: `${middleCircleSize}px`, height: `${middleCircleSize}px` }}
+            ></div>
+            <div 
+              className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#cfcdcf]"
+              style={{ width: `${smallCircleSize}px`, height: `${smallCircleSize}px` }}
+            ></div>
+            <div 
+              className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full bg-[#e9e4ea]"
+              style={{ width: `${smallerCircleSize}px`, height: `${smallerCircleSize}px` }}
+            ></div>
+            <div 
+              className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border-[1px] border-[#c8c7c5] bg-[#f5f5f5] shadow-[0_0_24px_-12px_rgba(0,0,0,0.30)_inset]"
+              style={{ width: `${centerCircleSize}px`, height: `${centerCircleSize}px` }}
+            ></div>
+          </div>
           </div>
         </motion.div>
       )}

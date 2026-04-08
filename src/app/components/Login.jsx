@@ -14,14 +14,9 @@ export default function Login({ user, setUser, handleLogout }) {
   const [backendBase, setBackendBase] = useState("");
 
   useEffect(() => {
-    // ✅ Only runs in browser
-    const host = window.location.hostname;
-    const base =
-      host === "localhost"
-        ? "http://192.168.1.72:8000"
-        : `http://${host}:8000`;
-    setBackendBase(base);
+    setBackendBase("https://framebackend.onrender.com");
   }, []);
+
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -144,10 +139,10 @@ export default function Login({ user, setUser, handleLogout }) {
           </div>
         </div>
 
-          <div className="mt-3 text-xs break-words text-center" style={{ maxWidth: 360 }}>
+          {/* <div className="mt-3 text-xs break-words text-center" style={{ maxWidth: 360 }}>
             Or open on your phone: <br/>
             <a className="underline" href={pairUrl}>{pairUrl}</a>
-          </div>
+          </div> */}
 
         </div>
       );
@@ -175,7 +170,7 @@ export default function Login({ user, setUser, handleLogout }) {
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
               >
-                  <SongPage user={user}/>
+                  <SongPage user={user} setUser={setUser}/>
               </motion.div>
             </AnimatePresence>
           )}

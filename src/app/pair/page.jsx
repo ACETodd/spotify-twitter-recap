@@ -8,14 +8,9 @@ export default function Pair() {
   const [backendBase, setBackendBase] = useState("");
 
   useEffect(() => {
-    // ✅ Only runs in browser
-    const host = window.location.hostname;
-    const base =
-      host === "localhost"
-        ? "http://192.168.1.72:8000"
-        : `http://${host}:8000`;
-    setBackendBase(base);
+    setBackendBase("https://framebackend.onrender.com");
   }, []);
+
 
   useEffect(() => {
     // Get frame_id from URL params
