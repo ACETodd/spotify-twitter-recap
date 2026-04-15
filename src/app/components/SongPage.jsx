@@ -16,7 +16,8 @@ export default function SongPage({user, setUser}) {
   const lastTrackIdRef = useRef(null);
   const [isPlaying, setIsPlaying] = useState(false);
   const [fadeState, setFadeState] = useState("fadeIn");
-
+  const fadeOutTimeoutRef = useRef(null);
+  const fadeInTimeoutRef = useRef(null);
   
   useLayoutEffect(() => {
     const updateSize = () => {
@@ -73,14 +74,18 @@ export default function SongPage({user, setUser}) {
 
         if (isPlaying && track) {
           if (lastTrackIdRef.current !== track.name) {
+            clearTimeout(fadeOutTimeoutRef.current);
+            clearTimeout(fadeInTimeoutRef.current);
+
             setFadeState("fadeOut");
-            setTimeout(() => {
+            fadeOutTimeoutRef.current = setTimeout(() => {
               setCurrentTrack(track);
               lastTrackIdRef.current = track.name;
-              console.log("▶️ Now playing:", track.name);
-            // 3️⃣ Then trigger fade-in
-            setFadeState("fadeIn");
-          }, 600); // match your fadeOut duration
+
+              fadeInTimeoutRef.current = setTimeout(() => {
+                setFadeState("fadeIn");
+              }, 2000); // CD animation timing
+            }, 600); // match your fadeOut duration
             
           }
           setIsPlaying(true);
@@ -106,7 +111,11 @@ export default function SongPage({user, setUser}) {
 
     fetchCurrentlyPlaying();
     const interval = setInterval(fetchCurrentlyPlaying, 5000);
-    return () => clearInterval(interval);
+    return () => {
+      clearInterval(interval);
+      clearTimeout(fadeOutTimeoutRef.current);
+      clearTimeout(fadeInTimeoutRef.current);
+    };
   }, [user, setUser]);
 
   const truncate = (str, max = 50) => {
