@@ -109,6 +109,10 @@ export default function SongPage({user, setUser}) {
     return () => clearInterval(interval);
   }, [user, setUser]);
 
+  const truncate = (str, max = 50) => {
+    if (!str) return '';
+    return str.length > max ? str.slice(0, max) + '...' : str;
+  };
 
   return (
     <div className="min-h-screen flex sm:flex-row flex-col items-center justify-between bg-gradient-to-br from-gray-200 to-gray-300 mb-40 sm:mb-0 sm:overflow-y-hidden">
@@ -144,17 +148,17 @@ export default function SongPage({user, setUser}) {
                   </div>
                   <div 
                     key={currentTrack?.name || 'placeholder'} 
-                    className={`fixed bottom-[25rem] right-[11rem] text-right ${
+                    className={`fixed bottom-[25rem] right-[10rem] text-right ${
                       fadeState === "fadeIn" ? "animate-fadeIn" : "animate-fadeOut"
                     }`}
                     style={{maxWidth: 525}}
                   >
                     <p className="text-gray-800 font-mono font-semibold text-lg">
-                      {currentTrack?.name || ''}
+                      {truncate(currentTrack?.name)}
                     </p>
                     {currentTrack?.artists?.[0] && (
                       <p className="text-gray-700 font-mono text-sm">
-                        by {currentTrack.artists[0]}
+                        by {truncate(currentTrack.artists[0])}
                       </p>
                     )}
                   </div>
