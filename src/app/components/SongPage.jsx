@@ -86,7 +86,7 @@ export default function SongPage({user, setUser}) {
 
               fadeInTimeoutRef.current = setTimeout(() => {
                 setFadeState("fadeIn");
-              }, 2000); // CD animation timing
+              }, 1800); // CD animation timing
             }, 600); // match your fadeOut duration
             
           }
