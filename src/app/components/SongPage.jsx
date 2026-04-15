@@ -153,11 +153,11 @@ export default function SongPage({user, setUser}) {
                     }`}
                     style={{maxWidth: 525}}
                   >
-                    <p className="text-gray-800 font-mono font-semibold text-lg">
+                    <p className="text-gray-800 font-mono font-semibold text-lg whitespace-nowrap overflow-hidden">
                       {truncate(currentTrack?.name)}
                     </p>
                     {currentTrack?.artists?.[0] && (
-                      <p className="text-gray-700 font-mono text-sm">
+                      <p className="text-gray-700 font-mono text-sm whitespace-nowrap overflow-hidden">
                         by {truncate(currentTrack.artists[0])}
                       </p>
                     )}
