@@ -144,7 +144,7 @@ export default function SongPage({user, setUser}) {
                   </div>
                   <div 
                     key={currentTrack?.name || 'placeholder'} 
-                    className={`fixed bottom-80 right-60 text-right ${
+                    className={`fixed bottom-100 right-50 text-right ${
                       fadeState === "fadeIn" ? "animate-fadeIn" : "animate-fadeOut"
                     }`}
                     style={{maxWidth: 525}}
