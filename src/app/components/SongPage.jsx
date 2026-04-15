@@ -78,9 +78,11 @@ export default function SongPage({user, setUser}) {
             clearTimeout(fadeInTimeoutRef.current);
 
             setFadeState("fadeOut");
+
             fadeOutTimeoutRef.current = setTimeout(() => {
               setCurrentTrack(track);
               lastTrackIdRef.current = track.name;
+              setFadeState("hidden");
 
               fadeInTimeoutRef.current = setTimeout(() => {
                 setFadeState("fadeIn");
@@ -156,9 +158,13 @@ export default function SongPage({user, setUser}) {
                       </div>
                   </div>
                   <div 
-                    key={currentTrack?.name || 'placeholder'} 
+                    // key={currentTrack?.name || 'placeholder'} 
                     className={`fixed bottom-[25rem] right-[10rem] text-right ${
-                      fadeState === "fadeIn" ? "animate-fadeIn" : "animate-fadeOut"
+                      fadeState === "fadeIn"
+                        ? "animate-fadeIn"
+                        : fadeState === "fadeOut"
+                        ? "animate-fadeOut"
+                        : "opacity-0"
                     }`}
                     style={{maxWidth: 525}}
                   >
