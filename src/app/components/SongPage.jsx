@@ -19,6 +19,21 @@ export default function SongPage({user, setUser}) {
   const fadeOutTimeoutRef = useRef(null);
   const fadeInTimeoutRef = useRef(null);
   
+  const lastKnownTrackRef = useRef(null);
+  const inactiveSinceRef = useRef(null);
+
+  const INACTIVE_CLEAR_AFTER_MS = 10 * 60 * 1000; // 10 minutes
+
+  const preloadImage = (src) =>
+    new Promise((resolve) => {
+      if (!src) return resolve();
+
+      const img = new Image();
+      img.onload = resolve;
+      img.onerror = resolve;
+      img.src = src;
+    });
+
   useLayoutEffect(() => {
     const updateSize = () => {
       const viewportWidth = window.innerWidth;
@@ -72,14 +87,21 @@ export default function SongPage({user, setUser}) {
         const track = data?.track || null;
         const isPlaying = Boolean(data?.is_playing);
 
-        if (isPlaying && track) {
+        if (track) {
+          inactiveSinceRef.current = null;
+          lastKnownTrackRef.current = track;
+
           if (lastTrackIdRef.current !== track.name) {
             clearTimeout(fadeOutTimeoutRef.current);
             clearTimeout(fadeInTimeoutRef.current);
 
             setFadeState("fadeOut");
 
-            fadeOutTimeoutRef.current = setTimeout(() => {
+            fadeOutTimeoutRef.current = setTimeout(async () => {
+              const albumImage = track?.album?.images?.[0]?.url;
+
+              await preloadImage(albumImage);
+
               setCurrentTrack(track);
               lastTrackIdRef.current = track.name;
               setFadeState("hidden");
@@ -87,22 +109,39 @@ export default function SongPage({user, setUser}) {
               fadeInTimeoutRef.current = setTimeout(() => {
                 setFadeState("fadeIn");
               }, 1800); // CD animation timing
-            }, 600); // match your fadeOut duration
-            
+            }, 600); // match fadeOut duration
           }
-          setIsPlaying(true);
+
+          setIsPlaying(isPlaying);
         } else {
           setIsPlaying(false);
 
-          if (track && lastTrackIdRef.current === track.name) {
-            console.log("⏸️ Song paused:", track.name);
-          } else {
-            if (lastTrackIdRef.current) {
-              console.log("🛑 No song playing.");
-              setCurrentTrack(null);
-              lastTrackIdRef.current = null;
+          if (lastKnownTrackRef.current) {
+            if (!inactiveSinceRef.current) {
+              inactiveSinceRef.current = Date.now();
             }
+
+            const inactiveFor = Date.now() - inactiveSinceRef.current;
+
+            if (inactiveFor >= INACTIVE_CLEAR_AFTER_MS) {
+              console.log("🛑 Spotify inactive for 10 minutes; clearing CD.");
+
+              setCurrentTrack(null);
+              lastKnownTrackRef.current = null;
+              lastTrackIdRef.current = null;
+              inactiveSinceRef.current = null;
+              setFadeState("fadeIn");
+
+              return;
+            }
+
+            console.log("⏸️ Spotify inactive; keeping cached paused track.");
+
+            setCurrentTrack(lastKnownTrackRef.current);
+            return;
           }
+
+          console.log("🛑 No song playing and no cached track.");
         }
       } catch (err) {
         console.error("⚠️ Error fetching currently playing:", err);
